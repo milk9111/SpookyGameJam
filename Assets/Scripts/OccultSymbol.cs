@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,9 @@ public class OccultSymbol : MonoBehaviour
     private bool _canDraw;
     private HashSet<Vector3> _points;
 
+    private Action _successCallback;
+    private Action _messedUpCallback;
+
     private List<OccultSymbolNode> _nodes;
     private HashSet<int> _foundNodes;
     private bool _foundAllNodes;
@@ -23,6 +27,8 @@ public class OccultSymbol : MonoBehaviour
     private GameObject _firstNodeObj;
 
     private bool _mousePressed;
+
+    private bool _stopDrawingOverride;
 
     void Awake()
     {
@@ -49,10 +55,16 @@ public class OccultSymbol : MonoBehaviour
 
     void Update()
     {
+        if (_stopDrawingOverride)
+        {
+            return;
+        }
+
         if (_foundAllNodes)
         {
             _lineRenderer.loop = true;
-            Debug.Log("FOUND ALL NODES!!!");
+            _mousePressed = false;
+            //Debug.Log("FOUND ALL NODES!!!");
             return;
         }
 
@@ -105,6 +117,17 @@ public class OccultSymbol : MonoBehaviour
         }
     }
 
+    public void StopDrawing()
+    {
+        _stopDrawingOverride = true;
+    }
+
+    public void Init(Action successCallback, Action messedUpCallback)
+    {
+        _successCallback = successCallback;
+        _messedUpCallback = messedUpCallback;
+    }
+
     public void OccultSymbolNodeCallback(int index)
     {
         if (!_mousePressed)
@@ -112,7 +135,7 @@ public class OccultSymbol : MonoBehaviour
             return; 
         }
 
-        Debug.Log($"hit node {index}");
+        //Debug.Log($"hit node {index}");
 
         if (!_foundNodes.Contains(index))
         {
@@ -125,23 +148,43 @@ public class OccultSymbol : MonoBehaviour
         }
 
         _foundAllNodes = _foundNodes.Count >= _nodes.Count && index == _firstNode;
+        if (_foundAllNodes)
+        {
+            _successCallback();
+        }
     }
 
     void OnMouseEnter()
     {
+        if (_foundAllNodes || _stopDrawingOverride)
+        {
+            return;
+        }
+
         Debug.Log("enter");
-        ResetSymbol();
         _canDraw = true;
     }
 
     void OnMouseExit()
     {
+        if (_foundAllNodes || _stopDrawingOverride)
+        {
+            return;
+        }
+
         Debug.Log("exit");
+        if (_mousePressed)
+        {
+            ResetSymbol();
+        }
+        
         _canDraw = false;
     }
 
     private void ResetSymbol()
     {
+        _messedUpCallback();
+
         if (_firstNodeObj != null)
         {
             _nodes.RemoveAt(_firstNode);
