@@ -77,28 +77,17 @@ public class OccultSymbol : MonoBehaviour
         {
             if (_firstNode == -1)
             {
-                var withinNodeRange = false;
                 Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 mouseWorldPos.z = 0;
-                foreach (var node in _nodes)
-                {
-                    mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                    if (Vector2.Distance(node.transform.position, mouseWorldPos) <= GameConstants.i.distanceToNode)
-                    {
-                        withinNodeRange = true;
-                        break;
-                    }
-                }
-
-                if (!withinNodeRange)
-                {
-                    var node = Instantiate(nodePrefab, mouseWorldPos, Quaternion.identity);
-                    node.transform.parent = transform;
-                    _nodes.Add(node);
-                    _firstNode = _nodes.Count - 1;
-                    _firstNodeObj = node.gameObject;
-                    node.Init(_firstNode, OccultSymbolNodeCallback);
-                }
+                var node = Instantiate(nodePrefab, mouseWorldPos, Quaternion.identity);
+                node.transform.parent = transform;
+                node.transform.position = new Vector3(node.transform.position.x, node.transform.position.y, 0);
+                node.transform.localScale = new Vector2(0.3f, 0.3f);
+                node.GetComponent<SpriteRenderer>().sortingLayerName = "StartingNode";
+                _nodes.Add(node);
+                _firstNode = _nodes.Count - 1;
+                _firstNodeObj = node.gameObject;
+                node.Init(_firstNode, OccultSymbolNodeCallback);
             }
             
             _mousePressed = true;
@@ -151,6 +140,14 @@ public class OccultSymbol : MonoBehaviour
         if (_foundAllNodes)
         {
             _successCallback();
+        }
+    }
+
+    public void SetNodeVisibility(bool showNodes)
+    {
+        foreach(var node in _nodes)
+        {
+            node.SetVisibility(showNodes);
         }
     }
 

@@ -35,6 +35,6 @@ public class GameOver : MonoBehaviour
 
     public void Scream()
     {
-        _soundPlayer.PlayOneShot(screamClip);
+        _soundPlayer.PlayOneShot(screamClip, 0.5f);
     }
 }

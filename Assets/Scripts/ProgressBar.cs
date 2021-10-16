@@ -23,6 +23,11 @@ public class ProgressBar : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (_monsterTimer.disabled)
+        {
+            return;
+        }
+
         _slider.value = (_monsterTimer.monsterTimerSeconds - (_monsterTimer.endTime - Time.time)) / _monsterTimer.monsterTimerSeconds;
     }
 }

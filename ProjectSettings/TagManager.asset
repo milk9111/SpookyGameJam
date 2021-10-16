@@ -44,3 +44,6 @@ TagManager:
   - name: Line
     uniqueID: 1763621587
     locked: 0
+  - name: StartingNode
+    uniqueID: 149242749
+    locked: 0

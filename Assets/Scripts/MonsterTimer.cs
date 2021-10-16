@@ -9,6 +9,8 @@ public class MonsterTimer : MonoBehaviour
     public float monsterTimerSeconds;
     public float endTime { get; private set; }
 
+    public bool disabled;
+
     private UnitSoundPlayer _soundPlayer;
     private bool _isDone;
 
@@ -23,6 +25,11 @@ public class MonsterTimer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (disabled)
+        {
+            return;
+        }
+
         if (Time.time >= endTime && !_isDone)
         {
             _isDone = true;
@@ -32,6 +39,9 @@ public class MonsterTimer : MonoBehaviour
 
     private void OnGUI()
     {
-        GUI.Label(new Rect(10, 10, 100, 20), $"{(Time.time < endTime ? endTime - Time.time : 0f)}");
+        if (!disabled)
+        {
+            GUI.Label(new Rect(10, 10, 100, 20), $"{(Time.time < endTime ? endTime - Time.time : 0f)}");
+        }
     }
 }

@@ -20,6 +20,11 @@ public class OccultSymbolNode : MonoBehaviour
         _spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
+    public void SetVisibility(bool showNode)
+    {
+        _spriteRenderer.enabled = showNode;
+    }
+
     private void Update()
     {
         if (!_init)
