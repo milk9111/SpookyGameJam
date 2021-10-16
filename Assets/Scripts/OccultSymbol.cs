@@ -77,6 +77,7 @@ public class OccultSymbol : MonoBehaviour
         {
             if (_firstNode == -1)
             {
+                Debug.Log("Adding first node!");
                 Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 mouseWorldPos.z = 0;
                 var node = Instantiate(nodePrefab, mouseWorldPos, Quaternion.identity);

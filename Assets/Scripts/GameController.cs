@@ -5,12 +5,25 @@ using UnityEngine;
 public class GameController : MonoBehaviour
 {
     public bool mute;
+    public DifficultySO difficulty;
 
+    private OccultSymbolController _occultSymbolController;
+    private MonsterTimer _monsterTimer;
     private float _startingVolume;
 
     private void Awake()
     {
         _startingVolume = AudioListener.volume;
+    }
+
+    private void Start()
+    {
+        _occultSymbolController = FindObjectOfType<OccultSymbolController>();
+        _monsterTimer = FindObjectOfType<MonsterTimer>();
+
+        _occultSymbolController.totalSymbols = difficulty.symbolCount;
+        _monsterTimer.monsterTimerSeconds = difficulty.monsterTimerSeconds;
+        _monsterTimer.ResetEndTime();
     }
 
     private void Update()

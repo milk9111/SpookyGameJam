@@ -16,31 +16,35 @@ public class OccultSymbolController : MonoBehaviour
     public bool showNodes;
     public bool onlyOneSymbol;
 
-    public List<OccultSymbol> symbolList;
+    public int totalSymbols;
+
+    public List<SymbolSampleSO> symbolList;
 
     public Action onVictory;
+    public Action onSuccess;
 
-    private List<OccultSymbol> _remainingSymbols;
-    private List<OccultSymbol> _usedSymbols;
+    private int _usedCount;
 
     private UnitSoundPlayer _soundPlayer;
 
     private MonsterTimer _monsterTimer;
 
+    private Book _book;
+
     private void Awake()
     {
         _soundPlayer = GetComponent<UnitSoundPlayer>();
-        _remainingSymbols = new List<OccultSymbol>();
-        foreach (var symbol in symbolList)
-        {
-            _remainingSymbols.Add(symbol);
-        }
 
-        _usedSymbols = new List<OccultSymbol>();
+        if (totalSymbols == 0)
+        {
+            totalSymbols = symbolList.Count;
+        }
     }
 
     private void Start()
     {
+        _book = FindObjectOfType<Book>();
+
         if (activeSymbol == null)
         {
             activeSymbol = FindObjectOfType<OccultSymbol>();
@@ -48,22 +52,18 @@ public class OccultSymbolController : MonoBehaviour
 
         if (activeSymbol == null)
         {
-            activeSymbol = Instantiate(symbolList[Random.Range(0, symbolList.Count)], Vector3.zero, Quaternion.identity);
+            activeSymbol = Instantiate(symbolList[Random.Range(0, symbolList.Count)].symbol, Vector3.zero, Quaternion.identity);
         }
 
-        var removingIndex = -1;
-        for (var i = 0; i < _remainingSymbols.Count; i++)
+        for (var i = 0; i < symbolList.Count; i++)
         {
-            if (activeSymbol.name == _remainingSymbols[i].name)
+            if (activeSymbol.name.Contains(symbolList[i].symbol.name))
             {
-                _usedSymbols.Add(_remainingSymbols[i]);
-                removingIndex = i;
-            }
-        }
+                _usedCount++;
+                var sample = Instantiate(symbolList[i].sample, Vector3.zero, Quaternion.identity);
 
-        if (removingIndex != -1)
-        {
-            _remainingSymbols.RemoveAt(removingIndex);
+                _book.SetPositions(sample.transform, activeSymbol.transform);
+            }
         }
 
         _monsterTimer = FindObjectOfType<MonsterTimer>();
@@ -77,16 +77,27 @@ public class OccultSymbolController : MonoBehaviour
         activeSymbol.StopDrawing();
     }
 
+    public int GetUsedCount()
+    {
+        return _usedCount;
+    }
+
+    public void Victory()
+    {
+        _monsterTimer.disabled = true;
+        StartCoroutine(WaitForVictory());
+    }
+
     public void SuccessCallback()
     {
-        
-        if (!_remainingSymbols.Any() || onlyOneSymbol)
+        if (_usedCount == totalSymbols || onlyOneSymbol)
         {
-            _monsterTimer.disabled = true;
-            StartCoroutine(WaitForVictory());
+            Victory(); 
         } else
         {
+            onSuccess();
             _soundPlayer.PlayOneShot(successClip, 0.5f);
+            
             StartCoroutine(WaitForNextSymbol());
         }
     }
@@ -102,7 +113,7 @@ public class OccultSymbolController : MonoBehaviour
 
         if (activeSymbol != null)
         {
-            Destroy(activeSymbol.gameObject);
+            _book.DestroySymbolSample();
         } else
         {
             Debug.LogWarning("activeSymbol was null during WaitForVictory!");
@@ -111,22 +122,34 @@ public class OccultSymbolController : MonoBehaviour
         onVictory();
     }
 
+    IEnumerator WaitForReset()
+    {
+        yield return new WaitForSeconds(nextSymbolTimerSeconds);
+        ResetSymbol();
+    }
+
     IEnumerator WaitForNextSymbol()
     {
         yield return new WaitForSeconds(nextSymbolTimerSeconds);
+        _book.DestroySymbolSample();
+        StartCoroutine(WaitForReset());
+    }
 
-        var nextIndex = Random.Range(0, _remainingSymbols.Count);
+    private void ResetSymbol()
+    {
+        var nextIndex = Random.Range(0, symbolList.Count);
 
-        var oldObject = activeSymbol.gameObject;
         activeSymbol = null;
-        Debug.Log($"nextIndex: {nextIndex}");
-        activeSymbol = Instantiate(_remainingSymbols[nextIndex], Vector3.zero, Quaternion.identity);
+        Debug.Log($"nextIndex: {nextIndex} - Remaining Count: {symbolList.Count}");
+        activeSymbol = Instantiate(symbolList[nextIndex].symbol, Vector3.zero, Quaternion.identity);
         activeSymbol.Init(SuccessCallback, MessedUpCallback);
         activeSymbol.SetNodeVisibility(showNodes);
 
-        _usedSymbols.Add(_remainingSymbols[nextIndex]);
-        _remainingSymbols.RemoveAt(nextIndex);
+        var sample = Instantiate(symbolList[nextIndex].sample, Vector3.zero, Quaternion.identity);
 
-        Destroy(oldObject);
+        _usedCount++;
+
+        
+        _book.SetPositions(sample.transform, activeSymbol.transform);
     }
 }

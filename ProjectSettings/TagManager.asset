@@ -41,6 +41,18 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Wall
+    uniqueID: 556099789
+    locked: 0
+  - name: Floor
+    uniqueID: 581617977
+    locked: 0
+  - name: Bed
+    uniqueID: 3160860725
+    locked: 0
+  - name: Book
+    uniqueID: 2043853123
+    locked: 0
   - name: Line
     uniqueID: 1763621587
     locked: 0

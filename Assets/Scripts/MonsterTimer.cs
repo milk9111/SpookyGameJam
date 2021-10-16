@@ -19,6 +19,11 @@ public class MonsterTimer : MonoBehaviour
     private void Awake()
     {
         _soundPlayer = GetComponent<UnitSoundPlayer>();
+        ResetEndTime();
+    }
+
+    public void ResetEndTime()
+    {
         endTime = Time.time + monsterTimerSeconds;
     }
 

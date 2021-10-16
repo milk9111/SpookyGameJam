@@ -3,21 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(Slider))]
 public class ProgressBar : MonoBehaviour
 {
-    private Slider _slider;
-    private MonsterTimer _monsterTimer;
+    public Slider monsterSlider;
+    public Slider victorySlider;
 
-    private void Awake()
-    {
-        _slider = GetComponent<Slider>();
-    }
+    private MonsterTimer _monsterTimer;
+    private OccultSymbolController _occultSymbolController;
 
     // Start is called before the first frame update
     void Start()
     {
         _monsterTimer = FindObjectOfType<MonsterTimer>();
+        _occultSymbolController = FindObjectOfType<OccultSymbolController>();
+        _occultSymbolController.onSuccess += SuccessCallback;
     }
 
     // Update is called once per frame
@@ -28,6 +27,16 @@ public class ProgressBar : MonoBehaviour
             return;
         }
 
-        _slider.value = (_monsterTimer.monsterTimerSeconds - (_monsterTimer.endTime - Time.time)) / _monsterTimer.monsterTimerSeconds;
+        monsterSlider.value = (_monsterTimer.monsterTimerSeconds - (_monsterTimer.endTime - Time.time)) / _monsterTimer.monsterTimerSeconds;
+    }
+
+    public void SuccessCallback()
+    {
+        //Debug.Log($"in here: {_occultSymbolController.GetUsedCount()} / {_occultSymbolController.totalSymbols} = {_occultSymbolController.GetUsedCount() / _occultSymbolController.totalSymbols}");
+        victorySlider.value = _occultSymbolController.GetUsedCount() / (float)_occultSymbolController.totalSymbols;
+        if (victorySlider.value >= monsterSlider.value)
+        {
+            _occultSymbolController.Victory();
+        }
     }
 }

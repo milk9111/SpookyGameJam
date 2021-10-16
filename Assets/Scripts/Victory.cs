@@ -5,6 +5,7 @@ using UnityEngine;
 public class Victory : MonoBehaviour
 {
     public AudioClip victoryClip;
+    public AudioClip pencilClip;
     
     private Animator _animator;
     private UnitSoundPlayer _soundPlayer;
@@ -31,5 +32,10 @@ public class Victory : MonoBehaviour
     public void VictorySound()
     {
         _soundPlayer.PlayOneShot(victoryClip);
+    }
+
+    public void PencilSound()
+    {
+        _soundPlayer.PlayOneShot(pencilClip);
     }
 }
