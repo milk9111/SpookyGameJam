@@ -28,7 +28,7 @@ public class OccultSymbol : MonoBehaviour
 
     private bool _mousePressed;
 
-    private bool _stopDrawingOverride;
+    public bool stopDrawingOverride { get; private set; }
 
     void Awake()
     {
@@ -55,7 +55,7 @@ public class OccultSymbol : MonoBehaviour
 
     void Update()
     {
-        if (_stopDrawingOverride)
+        if (stopDrawingOverride)
         {
             return;
         }
@@ -75,6 +75,7 @@ public class OccultSymbol : MonoBehaviour
 
         if (Input.GetMouseButton(0))
         {
+            Debug.Log($"First node is {_firstNode}");
             if (_firstNode == -1)
             {
                 Debug.Log("Adding first node!");
@@ -104,12 +105,19 @@ public class OccultSymbol : MonoBehaviour
         {
             ResetSymbol();
             _mousePressed = false;
+            _firstNode = -1;
+            Debug.Log("Got mouse button up!");
         }
     }
 
     public void StopDrawing()
     {
-        _stopDrawingOverride = true;
+        stopDrawingOverride = true;
+    }
+
+    public void SetStopDrawingOverride(bool stopDrawingOverride)
+    {
+        this.stopDrawingOverride = stopDrawingOverride;
     }
 
     public void Init(Action successCallback, Action messedUpCallback)
@@ -154,21 +162,26 @@ public class OccultSymbol : MonoBehaviour
 
     void OnMouseEnter()
     {
-        if (_foundAllNodes || _stopDrawingOverride)
+        if (_foundAllNodes || stopDrawingOverride)
         {
             return;
         }
 
+        Cursor.SetCursor(GameConstants.i.cursorTexture, Vector2.zero, CursorMode.Auto);
+
         Debug.Log("enter");
         _canDraw = true;
+        _firstNode = -1;
     }
 
     void OnMouseExit()
     {
-        if (_foundAllNodes || _stopDrawingOverride)
+        if (_foundAllNodes || stopDrawingOverride)
         {
             return;
         }
+
+        Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
 
         Debug.Log("exit");
         if (_mousePressed)
@@ -177,9 +190,10 @@ public class OccultSymbol : MonoBehaviour
         }
         
         _canDraw = false;
+        _firstNode = -1;
     }
 
-    private void ResetSymbol()
+    public void ResetSymbol()
     {
         _messedUpCallback();
 

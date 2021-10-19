@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1f8bc9ff2214bf04d8c55784a9950e62, type: 3}
-  m_Name: Symbol_TestSymbol2SO
+  m_Name: Symbol_MoonSymbolSO
   m_EditorClassIdentifier: 
-  sample: {fileID: 7302447900108951383, guid: 6703f5792b5c8234e8d63d517f384c12, type: 3}
-  symbol: {fileID: 1497051833817112400, guid: 80a495ba3f636ea468016c5c61f5a681, type: 3}
+  sample: {fileID: 8798807090673396280, guid: de0c3b0a20632654a8cf48fcdb7bcf29, type: 3}
+  symbol: {fileID: 1497051833817112400, guid: 3e7e1c18ad858854abdf1713a2c8e45c, type: 3}

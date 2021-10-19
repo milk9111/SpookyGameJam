@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(UnitSoundPlayer))]
 public class MonsterTimer : MonoBehaviour
@@ -11,8 +13,17 @@ public class MonsterTimer : MonoBehaviour
 
     public bool disabled;
 
+    public float eventIntervalSeconds;
+
+    public List<AbstractEvent> events;
+
     private UnitSoundPlayer _soundPlayer;
     private bool _isDone;
+    private bool _activeEvent;
+
+    private List<AbstractEvent> _usedEvents;
+
+    private float _currentTime;
 
     public Action onComplete;
     
@@ -20,11 +31,21 @@ public class MonsterTimer : MonoBehaviour
     {
         _soundPlayer = GetComponent<UnitSoundPlayer>();
         ResetEndTime();
+        _usedEvents = new List<AbstractEvent>();
+    }
+
+    private void Start()
+    {
+        foreach (var ev in events)
+        {
+            ev.onExit += ExitCallback;
+        }
     }
 
     public void ResetEndTime()
     {
         endTime = Time.time + monsterTimerSeconds;
+        _currentTime = Time.time;
     }
 
     // Update is called once per frame
@@ -35,18 +56,34 @@ public class MonsterTimer : MonoBehaviour
             return;
         }
 
-        if (Time.time >= endTime && !_isDone)
+        _currentTime += Time.deltaTime;
+
+        if (_currentTime >= endTime && !_isDone)
         {
             _isDone = true;
             onComplete();
         }
+
+        if (Time.unscaledTime % eventIntervalSeconds <= 0.01f && !_activeEvent)
+        {
+            var index = Random.Range(0, events.Count);
+
+            _activeEvent = true;
+            events[index].Enter();
+
+            _usedEvents.Add(events[index]);
+            events.RemoveAt(index);
+
+            if (!events.Any())
+            {
+                events = _usedEvents;
+                _usedEvents = new List<AbstractEvent>();
+            }
+        }
     }
 
-    private void OnGUI()
+    public void ExitCallback()
     {
-        if (!disabled)
-        {
-            GUI.Label(new Rect(10, 10, 100, 20), $"{(Time.time < endTime ? endTime - Time.time : 0f)}");
-        }
+        _activeEvent = false;
     }
 }

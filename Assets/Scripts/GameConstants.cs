@@ -5,6 +5,7 @@ using UnityEngine;
 public class GameConstants : MonoBehaviour
 {
     public float distanceToNode;
+    public Texture2D cursorTexture;
 
     public static GameConstants i;
 

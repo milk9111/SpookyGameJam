@@ -31,6 +31,12 @@ public class OccultSymbolController : MonoBehaviour
 
     private Book _book;
 
+    private bool _stopDrawingOverride;
+
+    private Coroutine _waitForVictoryCoroutine;
+    private Coroutine _waitForResetCoroutine;
+    private Coroutine _waitForNextSymbolCoroutine;
+
     private void Awake()
     {
         _soundPlayer = GetComponent<UnitSoundPlayer>();
@@ -44,6 +50,7 @@ public class OccultSymbolController : MonoBehaviour
     private void Start()
     {
         _book = FindObjectOfType<Book>();
+        _book.onTransition += TransitionCallback;
 
         if (activeSymbol == null)
         {
@@ -74,6 +81,7 @@ public class OccultSymbolController : MonoBehaviour
 
     public void OnCompleteCallback()
     {
+        _stopDrawingOverride = true;
         activeSymbol.StopDrawing();
     }
 
@@ -85,7 +93,8 @@ public class OccultSymbolController : MonoBehaviour
     public void Victory()
     {
         _monsterTimer.disabled = true;
-        StartCoroutine(WaitForVictory());
+        _book.disabled = true;
+        _waitForVictoryCoroutine = StartCoroutine(WaitForVictory());
     }
 
     public void SuccessCallback()
@@ -97,8 +106,8 @@ public class OccultSymbolController : MonoBehaviour
         {
             onSuccess();
             _soundPlayer.PlayOneShot(successClip, 0.5f);
-            
-            StartCoroutine(WaitForNextSymbol());
+            _book.disabled = true;
+            _waitForNextSymbolCoroutine = StartCoroutine(WaitForNextSymbol());
         }
     }
 
@@ -111,28 +120,45 @@ public class OccultSymbolController : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
 
-        if (activeSymbol != null)
+        if (!_stopDrawingOverride)
         {
-            _book.DestroySymbolSample();
-        } else
-        {
-            Debug.LogWarning("activeSymbol was null during WaitForVictory!");
+            if (activeSymbol != null)
+            {
+                _book.DestroySymbolSample();
+            }
+            else
+            {
+                Debug.LogWarning("activeSymbol was null during WaitForVictory!");
+            }
+
+            onVictory();
         }
-        
-        onVictory();
+
+        _book.disabled = false;
     }
 
     IEnumerator WaitForReset()
     {
         yield return new WaitForSeconds(nextSymbolTimerSeconds);
         ResetSymbol();
+        _book.disabled = true;
     }
 
     IEnumerator WaitForNextSymbol()
     {
         yield return new WaitForSeconds(nextSymbolTimerSeconds);
-        _book.DestroySymbolSample();
-        StartCoroutine(WaitForReset());
+        if (!_stopDrawingOverride)
+        {
+            _book.disabled = true;
+            _book.DestroySymbolSample();
+            _waitForResetCoroutine = StartCoroutine(WaitForReset());
+        }
+    }
+
+    public void TransitionCallback()
+    {
+        activeSymbol.ResetSymbol();
+        activeSymbol.SetStopDrawingOverride(!activeSymbol.stopDrawingOverride);
     }
 
     private void ResetSymbol()
