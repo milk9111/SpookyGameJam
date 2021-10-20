@@ -11,6 +11,7 @@ public class Victory : MonoBehaviour
     private UnitSoundPlayer _soundPlayer;
 
     private OccultSymbolController _occultSymbolController;
+    private CompletionButtons _completionButtons;
 
     private void Awake()
     {
@@ -22,11 +23,19 @@ public class Victory : MonoBehaviour
     {
         _occultSymbolController = FindObjectOfType<OccultSymbolController>();
         _occultSymbolController.onVictory += Execute;
+
+        _completionButtons = FindObjectOfType<CompletionButtons>();
     }
 
     public void Execute()
     {
+        Debug.Log("Executing Victory");
         _animator.SetTrigger("Victory");
+    }
+
+    public void ShowButtons()
+    {
+        _completionButtons.Show();
     }
 
     public void VictorySound()

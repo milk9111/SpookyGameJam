@@ -31,10 +31,12 @@ public class Book : MonoBehaviour
     private void Start()
     {
         _monsterTimer = FindObjectOfType<MonsterTimer>();
+        _monsterTimer.onComplete += OnCompleteCallback;
     }
 
     private void Update()
     {
+        Debug.Log($"{disabled} - {_transitioning}");
         if (!disabled && !_transitioning && Input.GetKeyDown(KeyCode.Space))
         {
             _transitioning = true;
@@ -79,5 +81,10 @@ public class Book : MonoBehaviour
     {
         Destroy(_sample.gameObject);
         Destroy(_symbol.gameObject);
+    }
+
+    public void OnCompleteCallback()
+    {
+        disabled = true;
     }
 }

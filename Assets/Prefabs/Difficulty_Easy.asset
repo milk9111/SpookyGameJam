@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0ee3cec3b709894196d94ed3ca88ab8, type: 3}
   m_Name: Difficulty_Easy
   m_EditorClassIdentifier: 
-  monsterTimerSeconds: 60
+  monsterTimerSeconds: 120
   symbolCount: 20

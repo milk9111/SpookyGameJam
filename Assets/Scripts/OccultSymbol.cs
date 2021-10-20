@@ -15,6 +15,7 @@ public class OccultSymbol : MonoBehaviour
     private LineRenderer _lineRenderer;
 
     private bool _canDraw;
+    private bool _done;
     private HashSet<Vector3> _points;
 
     private Action _successCallback;
@@ -36,6 +37,7 @@ public class OccultSymbol : MonoBehaviour
         _lineRenderer = GetComponent<LineRenderer>();
 
         _canDraw = false;
+        _done = false;
         _points = new HashSet<Vector3>();
 
         _nodes = GetComponentsInChildren<OccultSymbolNode>().ToList();
@@ -64,7 +66,6 @@ public class OccultSymbol : MonoBehaviour
         {
             _lineRenderer.loop = true;
             _mousePressed = false;
-            //Debug.Log("FOUND ALL NODES!!!");
             return;
         }
 
@@ -75,10 +76,8 @@ public class OccultSymbol : MonoBehaviour
 
         if (Input.GetMouseButton(0))
         {
-            Debug.Log($"First node is {_firstNode}");
             if (_firstNode == -1)
             {
-                Debug.Log("Adding first node!");
                 Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 mouseWorldPos.z = 0;
                 var node = Instantiate(nodePrefab, mouseWorldPos, Quaternion.identity);
@@ -88,6 +87,7 @@ public class OccultSymbol : MonoBehaviour
                 node.GetComponent<SpriteRenderer>().sortingLayerName = "StartingNode";
                 _nodes.Add(node);
                 _firstNode = _nodes.Count - 1;
+                Debug.Log($"_firstNode is {_firstNode}");
                 _firstNodeObj = node.gameObject;
                 node.Init(_firstNode, OccultSymbolNodeCallback);
             }
@@ -103,10 +103,10 @@ public class OccultSymbol : MonoBehaviour
             }
         } else if (Input.GetMouseButtonUp(0))
         {
-            ResetSymbol();
+            Debug.Log("Mouse Up");
+            ResetSymbol(true);
             _mousePressed = false;
             _firstNode = -1;
-            Debug.Log("Got mouse button up!");
         }
     }
 
@@ -117,6 +117,7 @@ public class OccultSymbol : MonoBehaviour
 
     public void SetStopDrawingOverride(bool stopDrawingOverride)
     {
+        Debug.Log("Ovewriting");
         this.stopDrawingOverride = stopDrawingOverride;
     }
 
@@ -128,13 +129,12 @@ public class OccultSymbol : MonoBehaviour
 
     public void OccultSymbolNodeCallback(int index)
     {
+        Debug.Log("here");
         if (!_mousePressed)
         {
             return; 
         }
-
-        //Debug.Log($"hit node {index}");
-
+        Debug.Log("here2");
         if (!_foundNodes.Contains(index))
         {
             _foundNodes.Add(index);
@@ -146,8 +146,10 @@ public class OccultSymbol : MonoBehaviour
         }
 
         _foundAllNodes = _foundNodes.Count >= _nodes.Count && index == _firstNode;
-        if (_foundAllNodes)
+        if (_foundAllNodes && !_done)
         {
+            _done = true;
+            Debug.Log("here3");
             _successCallback();
         }
     }
@@ -186,17 +188,21 @@ public class OccultSymbol : MonoBehaviour
         Debug.Log("exit");
         if (_mousePressed)
         {
-            ResetSymbol();
+            ResetSymbol(true);
         }
-        
+
+        _mousePressed = false;
         _canDraw = false;
         _firstNode = -1;
     }
 
-    public void ResetSymbol()
+    public void ResetSymbol(bool messUp)
     {
-        _messedUpCallback();
-
+        if (messUp)
+        {
+            _messedUpCallback();
+        }
+        
         if (_firstNodeObj != null)
         {
             _nodes.RemoveAt(_firstNode);

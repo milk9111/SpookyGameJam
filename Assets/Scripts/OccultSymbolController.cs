@@ -22,6 +22,8 @@ public class OccultSymbolController : MonoBehaviour
 
     public Action onVictory;
     public Action onSuccess;
+    public Action onMessUp;
+    public Func<bool> onCanDoNextSymbol;
 
     private int _usedCount;
 
@@ -92,21 +94,22 @@ public class OccultSymbolController : MonoBehaviour
 
     public void Victory()
     {
+        Debug.Log("victory!!!");
         _monsterTimer.disabled = true;
         _book.disabled = true;
+        //activeSymbol.StopDrawing();
         _waitForVictoryCoroutine = StartCoroutine(WaitForVictory());
+        //_stopDrawingOverride = true;
     }
 
     public void SuccessCallback()
     {
-        if (_usedCount == totalSymbols || onlyOneSymbol)
+        onSuccess();
+        _soundPlayer.PlayOneShot(successClip, 0.5f);
+        _book.disabled = true;
+        if (onCanDoNextSymbol())
         {
-            Victory(); 
-        } else
-        {
-            onSuccess();
-            _soundPlayer.PlayOneShot(successClip, 0.5f);
-            _book.disabled = true;
+            Debug.Log("next symbol");
             _waitForNextSymbolCoroutine = StartCoroutine(WaitForNextSymbol());
         }
     }
@@ -114,6 +117,7 @@ public class OccultSymbolController : MonoBehaviour
     public void MessedUpCallback()
     {
         _soundPlayer.PlayOneShot(messedUpClip);
+        onMessUp();
     }
 
     IEnumerator WaitForVictory()
@@ -133,15 +137,13 @@ public class OccultSymbolController : MonoBehaviour
 
             onVictory();
         }
-
-        _book.disabled = false;
     }
 
     IEnumerator WaitForReset()
     {
         yield return new WaitForSeconds(nextSymbolTimerSeconds);
         ResetSymbol();
-        _book.disabled = true;
+        _book.disabled = false;
     }
 
     IEnumerator WaitForNextSymbol()
@@ -157,8 +159,13 @@ public class OccultSymbolController : MonoBehaviour
 
     public void TransitionCallback()
     {
-        activeSymbol.ResetSymbol();
+        if (activeSymbol == null)
+        {
+            return;
+        }
+
         activeSymbol.SetStopDrawingOverride(!activeSymbol.stopDrawingOverride);
+        activeSymbol.ResetSymbol(false);
     }
 
     private void ResetSymbol()

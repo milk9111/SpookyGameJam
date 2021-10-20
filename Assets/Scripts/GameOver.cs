@@ -10,6 +10,7 @@ public class GameOver : MonoBehaviour
     private Animator _animator;
     private UnitSoundPlayer _soundPlayer;
     private MonsterTimer _monsterTimer;
+    private CompletionButtons _completionButtons;
 
     private void Awake()
     {
@@ -21,6 +22,8 @@ public class GameOver : MonoBehaviour
     {
         _monsterTimer = FindObjectOfType<MonsterTimer>();
         _monsterTimer.onComplete += Execute;
+
+        _completionButtons = FindObjectOfType<CompletionButtons>();
     }
 
     public void Execute()
@@ -36,5 +39,10 @@ public class GameOver : MonoBehaviour
     public void Scream()
     {
         _soundPlayer.PlayOneShot(screamClip, 0.5f);
+    }
+
+    public void ShowButtons()
+    {
+        _completionButtons.Show();
     }
 }
