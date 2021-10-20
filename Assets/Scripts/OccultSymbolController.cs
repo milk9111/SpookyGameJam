@@ -16,8 +16,6 @@ public class OccultSymbolController : MonoBehaviour
     public bool showNodes;
     public bool onlyOneSymbol;
 
-    public int totalSymbols;
-
     public List<SymbolSampleSO> symbolList;
 
     public Action onVictory;
@@ -42,11 +40,6 @@ public class OccultSymbolController : MonoBehaviour
     private void Awake()
     {
         _soundPlayer = GetComponent<UnitSoundPlayer>();
-
-        if (totalSymbols == 0)
-        {
-            totalSymbols = symbolList.Count;
-        }
     }
 
     private void Start()

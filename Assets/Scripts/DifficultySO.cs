@@ -6,5 +6,4 @@ using UnityEngine;
 public class DifficultySO : ScriptableObject
 {
     public float monsterTimerSeconds;
-    public int symbolCount;
 }

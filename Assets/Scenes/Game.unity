@@ -416,6 +416,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 253831445}
+  - component: {fileID: 253831446}
   m_Layer: 5
   m_Name: CompletionButtons
   m_TagString: Untagged
@@ -443,6 +444,20 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -129}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &253831446
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 253831444}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8bbd635564706d4391c2e6384d377b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buttons:
+  - {fileID: 577531071}
 --- !u!1 &274091375
 GameObject:
   m_ObjectHideFlags: 0
@@ -1207,7 +1222,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &577531070
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1271,7 +1286,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 577531072}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 253831446}
+        m_TargetAssemblyTypeName: CompletionButtons, Assembly-CSharp
+        m_MethodName: Restart
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &577531072
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3484,7 +3511,6 @@ MonoBehaviour:
   nextSymbolTimerSeconds: 0.5
   showNodes: 0
   onlyOneSymbol: 0
-  totalSymbols: 0
   symbolList:
   - {fileID: 11400000, guid: 4702471075eee204e958c34ef5ac155c, type: 2}
   - {fileID: 11400000, guid: 119463d737f0edf438ae149b0fc43817, type: 2}
