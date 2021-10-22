@@ -34,4 +34,9 @@ public class CompletionButtons : MonoBehaviour
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
+
+    public void TitleScreen()
+    {
+        SceneManager.LoadScene("TitleScreen");
+    }
 }

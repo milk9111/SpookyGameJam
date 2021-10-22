@@ -31,6 +31,11 @@ public class UnitSoundPlayer : MonoBehaviour
         _source.Play();
     }
 
+    public bool IsPlaying()
+    {
+        return _source.isPlaying;
+    }
+
     public void StopRepeating()
     {
         _source.Stop();

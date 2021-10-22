@@ -9,7 +9,6 @@ public class GameOver : MonoBehaviour
 
     private Animator _animator;
     private UnitSoundPlayer _soundPlayer;
-    private MonsterTimer _monsterTimer;
     private CompletionButtons _completionButtons;
 
     private void Awake()
@@ -20,9 +19,6 @@ public class GameOver : MonoBehaviour
 
     private void Start()
     {
-        _monsterTimer = FindObjectOfType<MonsterTimer>();
-        _monsterTimer.onComplete += Execute;
-
         _completionButtons = FindObjectOfType<CompletionButtons>();
     }
 

@@ -80,6 +80,12 @@ public class OccultSymbolController : MonoBehaviour
         activeSymbol.StopDrawing();
     }
 
+    public void SetStopDrawingOverride(bool stopDrawingOverride)
+    {
+        _stopDrawingOverride = stopDrawingOverride;
+        activeSymbol.SetStopDrawingOverride(stopDrawingOverride);
+    }
+
     public int GetUsedCount()
     {
         return _usedCount;

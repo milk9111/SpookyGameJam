@@ -14,6 +14,8 @@ public class Book : MonoBehaviour
 
     public Action onTransition;
 
+    private Action _lowerBookAnimCallback;
+
     private Transform _sample;
     private Transform _symbol;
 
@@ -22,9 +24,11 @@ public class Book : MonoBehaviour
     private Vector3 _targetPos;
 
     private MonsterTimer _monsterTimer;
+    private Animator _animator;
 
     private void Awake()
     {
+        _animator = GetComponent<Animator>();
         _targetPos = Vector3.zero;
     }
 
@@ -86,5 +90,17 @@ public class Book : MonoBehaviour
     public void OnCompleteCallback()
     {
         disabled = true;
+    }
+
+    public void LowerBookAnim(Action callback)
+    {
+        _lowerBookAnimCallback = callback;
+        _animator.SetTrigger("Lower");
+
+    }
+
+    public void Finish()
+    {
+        _lowerBookAnimCallback();
     }
 }

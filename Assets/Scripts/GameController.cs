@@ -21,7 +21,7 @@ public class GameController : MonoBehaviour
         _occultSymbolController = FindObjectOfType<OccultSymbolController>();
         _monsterTimer = FindObjectOfType<MonsterTimer>();
 
-        _monsterTimer.monsterTimerSeconds = difficulty.monsterTimerSeconds;
+        _monsterTimer.monsterTimerSeconds = GameConstants.i.difficulty != null ? GameConstants.i.difficulty.monsterTimerSeconds : difficulty.monsterTimerSeconds;
         _monsterTimer.ResetEndTime();
     }
 

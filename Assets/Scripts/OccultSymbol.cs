@@ -87,7 +87,6 @@ public class OccultSymbol : MonoBehaviour
                 node.GetComponent<SpriteRenderer>().sortingLayerName = "StartingNode";
                 _nodes.Add(node);
                 _firstNode = _nodes.Count - 1;
-                Debug.Log($"_firstNode is {_firstNode}");
                 _firstNodeObj = node.gameObject;
                 node.Init(_firstNode, OccultSymbolNodeCallback);
             }
@@ -103,7 +102,6 @@ public class OccultSymbol : MonoBehaviour
             }
         } else if (Input.GetMouseButtonUp(0))
         {
-            Debug.Log("Mouse Up");
             ResetSymbol(true);
             _mousePressed = false;
             _firstNode = -1;
@@ -117,7 +115,6 @@ public class OccultSymbol : MonoBehaviour
 
     public void SetStopDrawingOverride(bool stopDrawingOverride)
     {
-        Debug.Log("Ovewriting");
         this.stopDrawingOverride = stopDrawingOverride;
     }
 
@@ -129,12 +126,10 @@ public class OccultSymbol : MonoBehaviour
 
     public void OccultSymbolNodeCallback(int index)
     {
-        Debug.Log("here");
         if (!_mousePressed)
         {
             return; 
         }
-        Debug.Log("here2");
         if (!_foundNodes.Contains(index))
         {
             _foundNodes.Add(index);
@@ -149,7 +144,6 @@ public class OccultSymbol : MonoBehaviour
         if (_foundAllNodes && !_done)
         {
             _done = true;
-            Debug.Log("here3");
             _successCallback();
         }
     }
